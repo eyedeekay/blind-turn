@@ -34,7 +34,7 @@ func (i *I2PRelayAddressGenerator) AllocatePacketConn(network string, requestedP
 	if err != nil {
 		return nil, nil, err
 	}
-	stream, err := sam.NewDatagramSession("clientTun", keys, sam3.Options_Small, 0)
+	stream, err := sam.NewDatagramSession(keys.Addr().Base32()[0:9], keys, sam3.Options_Small, 0)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -52,7 +52,7 @@ func (i *I2PRelayAddressGenerator) AllocateConn(network string, requestedPort in
 	if err != nil {
 		return nil, nil, err
 	}
-	stream, err := sam.NewStreamSession("clientTun", keys, sam3.Options_Small)
+	stream, err := sam.NewStreamSession(keys.Addr().Base32()[0:9], keys, sam3.Options_Small)
 	if err != nil {
 		return nil, nil, err
 	}

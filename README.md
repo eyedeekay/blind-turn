@@ -29,5 +29,10 @@ substitute them out directly to create a pure-I2P STUN/TURN server.
  transferring media peer-to-peer, it seems perfectly reasonable in many threat
  models to strive for anonymity from the network, and from the STUN/TURN
  server, but perhaps only wish to hide one's physical location form a peer.
+- Don't I2P clients already know their own destination addresses?
+ 1. Browsers might not. A native WebRTC over I2P application wouldn't need this.
+ 2. Which is a little interesting because it would be easier for me to write
+  this in Go, but it would be less useful.
+
 
 Many, many thanks to pion.ly for their incredible, easy to use library.

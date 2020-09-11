@@ -24,7 +24,7 @@ func Main(host, user, realm string, ping bool) {
 
 	// Dial TURN Server
 	//conn, err := net.Dial("tcp", host)
-	sam, err := sam3.NewSAM("127.0.0.1:7657")
+	sam, err := sam3.NewSAM("127.0.0.1:7656")
 	if err != nil {
 		return
 	}
@@ -104,7 +104,7 @@ func doPingTest(client *turn.Client, relayConn net.PacketConn) error {
 
 	// Set up pinger socket (pingerConn)
 	//pingerConn, err := net.ListenPacket("udp4", "0.0.0.0:0")
-	sam, err := sam3.NewSAM("127.0.0.1:7657")
+	sam, err := sam3.NewSAM("127.0.0.1:7656")
 	if err != nil {
 		return err
 	}

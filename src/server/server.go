@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"regexp"
 	"syscall"
+	"io/ioutil"
 
 	"github.com/eyedeekay/firefox-static/sammy"
 	"github.com/eyedeekay/sam3"
@@ -19,6 +20,8 @@ import (
 type I2PRelayAddressGenerator struct {
 }
 
+var Options_TURN_Short = []string{"inbound.length=1", "outbound.length=1", "inbound.lengthVariance=0", "outbound.lengthVariance=0", "inbound.quantity=3", "outbound.quantity=3", "inbound.backupQuantity=2", "outbound.backupQuantity=2", "i2cp.closeOnIdle=false", "i2cp.reduceOnIdle=false", "i2cp.leaseSetEncType=4,0"}
+
 // Validate confirms that the RelayAddressGenerator is properly initialized
 func (i *I2PRelayAddressGenerator) Validate() error {
 	return nil
@@ -26,7 +29,7 @@ func (i *I2PRelayAddressGenerator) Validate() error {
 
 // Allocate a PacketConn (UDP) RelayAddress
 func (i *I2PRelayAddressGenerator) AllocatePacketConn(network string, requestedPort int) (net.PacketConn, net.Addr, error) {
-	sam, err := sam3.NewSAM("127.0.0.1:7657")
+	sam, err := sam3.NewSAM("127.0.0.1:7656")
 	if err != nil {
 		return nil, nil, err
 	}
@@ -34,7 +37,7 @@ func (i *I2PRelayAddressGenerator) AllocatePacketConn(network string, requestedP
 	if err != nil {
 		return nil, nil, err
 	}
-	stream, err := sam.NewDatagramSession(keys.Addr().Base32()[0:9], keys, sam3.Options_Small, 0)
+	stream, err := sam.NewDatagramSession(keys.Addr().Base32()[0:9], keys, Options_TURN_Short, 0)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -44,7 +47,7 @@ func (i *I2PRelayAddressGenerator) AllocatePacketConn(network string, requestedP
 // Allocate a Conn (TCP) RelayAddress
 func (i *I2PRelayAddressGenerator) AllocateConn(network string, requestedPort int) (net.Conn, net.Addr, error) {
 	//tcpListener, err := sammy.Sammy()
-	sam, err := sam3.NewSAM("127.0.0.1:7657")
+	sam, err := sam3.NewSAM("127.0.0.1:7656")
 	if err != nil {
 		return nil, nil, err
 	}
@@ -52,11 +55,10 @@ func (i *I2PRelayAddressGenerator) AllocateConn(network string, requestedPort in
 	if err != nil {
 		return nil, nil, err
 	}
-	stream, err := sam.NewStreamSession(keys.Addr().Base32()[0:9], keys, sam3.Options_Small)
+	stream, err := sam.NewStreamSession(keys.Addr().Base32()[0:9], keys, Options_TURN_Short)
 	if err != nil {
 		return nil, nil, err
 	}
-	//fmt.Println("Client: Connecting to " + server.Base32())
 	tcpConn, err := stream.DialI2P("")
 	return tcpConn, keys.Addr(), nil
 }
@@ -69,6 +71,7 @@ func Main(users, realm string) {
 	if realm == "" {
 		realm = tcpListener.Addr().(i2pkeys.I2PAddr).Base32()
 	}
+	ioutil.WriteFile("base32.txt", []byte(tcpListener.Addr().(i2pkeys.I2PAddr).Base32()), 0644)
 
 	if len(users) == 0 {
 		log.Fatalf("'users' is required")
